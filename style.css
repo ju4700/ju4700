@@ -1,0 +1,55 @@
+@font-face {
+    font-family: 'Russo';
+    src: url('russo.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    background-color: black;
+    color: white;
+    font-family: Arial, sans-serif;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: flex-start;
+    height: 100vh;
+    position: relative;
+}
+
+header {
+    position: absolute;
+    top: 70px;
+    right: 80px;
+}
+
+header a {
+    color: white;
+    text-decoration: none;
+    margin: 0 11px;
+    font-size: 20px;
+    font-family: 'Russo', Arial, sans-serif; /* Apply custom font */
+}
+
+.container {
+    position: absolute;
+    bottom: 80px;
+    left: 80px;
+    text-align: left;
+}
+
+.name {
+    font-family: 'Russo', Arial, sans-serif; /* Apply custom font */
+    font-size: 48px;
+    font-weight: bold;
+    letter-spacing: 0.08em;
+    margin-top: 1px;
+}
+
+.description {
+    font-family: 'Russo', Arial, sans-serif; /* Apply custom font */
+    font-size: 14px;
+    max-width: 1200px;
+}
