@@ -59,7 +59,7 @@
   <a href="jalal4700" target="_blank">
     <img src="https://img.shields.io/static/v1?message=Discord&logo=discord&label=&color=7289DA&logoColor=white&labelColor=&style=for-the-badge" height="25" alt="discord logo"  />
   </a>
-  <a href="https://www.behance.net/jalal4700" target="_blank">
+  <a href="https://www.behance.net/ju_4700" target="_blank">
     <img src="https://img.shields.io/static/v1?message=Behance&logo=behance&label=&color=1769ff&logoColor=white&labelColor=&style=for-the-badge" height="25" alt="behance logo"  />
   </a>
 </div>
