@@ -6,16 +6,17 @@ canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 
 const particles = [];
-const particleCount = 100;
+const particleCount = 150;
 
 class Particle {
     constructor() {
         this.x = Math.random() * canvas.width;
         this.y = Math.random() * canvas.height;
-        this.size = Math.random() * 2 + 1;
-        this.speedX = Math.random() * 0.5 - 0.25;
-        this.speedY = Math.random() * 0.5 - 0.25;
-        this.hue = Math.random() * 360;
+        this.size = Math.random() * 3 + 1;
+        this.speedX = Math.random() * 0.3 - 0.15;
+        this.speedY = Math.random() * 0.3 - 0.15;
+        this.type = Math.random() > 0.5 ? 'ml' : 'cyber';
+        this.hue = this.type === 'ml' ? 300 : 180; // Magenta for ML, Cyan for Cyber
     }
 
     update() {
@@ -25,15 +26,15 @@ class Particle {
         if (this.x < 0 || this.x > canvas.width) this.speedX *= -1;
         if (this.y < 0 || this.y > canvas.height) this.speedY *= -1;
 
-        this.hue = (this.hue + 1) % 360;
+        this.hue += 0.5;
     }
 
     draw() {
         ctx.beginPath();
         ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-        ctx.fillStyle = `hsl(${this.hue}, 80%, 50%)`;
-        ctx.shadowBlur = 10;
-        ctx.shadowColor = `hsl(${this.hue}, 80%, 50%)`;
+        ctx.fillStyle = `hsl(${this.hue % 360}, 80%, 50%)`;
+        ctx.shadowBlur = 15;
+        ctx.shadowColor = `hsl(${this.hue % 360}, 80%, 50%)`;
         ctx.fill();
     }
 }
@@ -56,16 +57,16 @@ function animateParticles() {
 initParticles();
 animateParticles();
 
-// Navigation link animations
-document.querySelectorAll('.nav-link').forEach(link => {
-    link.addEventListener('mouseenter', () => {
-        link.style.transform = 'perspective(600px) translateZ(20px)';
-        link.style.textShadow = '0 0 30px #00ccff, 0 0 60px #00ccff';
+// Navigation and Module Interactions
+document.querySelectorAll('.nav-link, .module').forEach(element => {
+    element.addEventListener('mouseenter', () => {
+        element.style.transform = 'perspective(600px) translateZ(10px)';
+        element.style.boxShadow = '0 0 30px rgba(0, 204, 255, 0.8)';
     });
 
-    link.addEventListener('mouseleave', () => {
-        link.style.transform = 'perspective(600px) translateZ(0)';
-        link.style.textShadow = '0 0 20px #00ccff';
+    element.addEventListener('mouseleave', () => {
+        element.style.transform = 'perspective(600px) translateZ(0)';
+        element.style.boxShadow = 'none';
     });
 });
 
