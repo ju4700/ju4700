@@ -11,153 +11,14 @@ body {
     background: #000000;
     color: #ffffff;
     font-family: 'Russo', Arial, sans-serif;
-    height: 100vh;
+    min-height: 100vh;
     overflow: hidden;
     position: relative;
+    cursor: none;
 }
 
-.cyber-grid {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: repeating-linear-gradient(0deg, rgba(0, 204, 255, 0.05), rgba(0, 204, 255, 0.05) 1px, transparent 1px, transparent 20px),
-                repeating-linear-gradient(90deg, rgba(0, 204, 255, 0.05), rgba(0, 204, 255, 0.05) 1px, transparent 1px, transparent 20px);
-    z-index: 1;
-    animation: gridPulse 10s infinite;
-}
-
-.holo-interface {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 30px;
-    z-index: 5;
-    width: 90%;
-    max-width: 1000px;
-}
-
-.core-panel {
-    text-align: center;
-    background: rgba(0, 0, 0, 0.7);
-    padding: 20px;
-    border: 1px solid rgba(0, 204, 255, 0.3);
-    border-radius: 10px;
-    box-shadow: 0 0 40px rgba(0, 204, 255, 0.5);
-}
-
-.name {
-    font-size: 64px;
-    color: #00ccff;
-    text-shadow: 0 0 25px rgba(0, 204, 255, 0.8);
-    animation: holoGlitch 4s infinite;
-}
-
-.holo-text::before,
-.holo-text::after {
-    content: attr(data-text);
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-}
-
-.holo-text::before {
-    color: rgba(255, 0, 255, 0.6);
-    animation: holoGlitchTop 2s infinite;
-    clip-path: polygon(0 0, 100% 0, 100% 50%, 0 50%);
-}
-
-.holo-text::after {
-    color: rgba(0, 255, 255, 0.6);
-    animation: holoGlitchBottom 3s infinite;
-    clip-path: polygon(0 50%, 100% 50%, 100% 100%, 0 100%);
-}
-
-.tagline {
-    font-size: 20px;
-    color: #b3e0ff;
-    margin: 10px 0;
-}
-
-.description {
-    font-size: 16px;
-    color: #e0e0e0;
-    max-width: 600px;
-    margin: 0 auto;
-    animation: fadeIn 2s ease-in-out;
-}
-
-.link-matrix {
-    display: flex;
-    gap: 20px;
-    flex-wrap: wrap;
-    justify-content: center;
-}
-
-.nav-link {
-    color: #00ccff;
-    text-decoration: none;
-    font-size: 18px;
-    padding: 10px 20px;
-    border: 1px solid rgba(0, 204, 255, 0.4);
-    border-radius: 5px;
-    transition: all 0.3s ease;
-    position: relative;
-}
-
-.nav-link:hover {
-    color: #ffffff;
-    box-shadow: 0 0 20px rgba(0, 204, 255, 0.8);
-    transform: translateY(-5px);
-}
-
-.skill-modules {
-    display: flex;
-    gap: 20px;
-    flex-wrap: wrap;
-    justify-content: center;
-}
-
-.module {
-    background: rgba(0, 0, 0, 0.8);
-    padding: 15px;
-    border: 1px solid rgba(0, 204, 255, 0.3);
-    border-radius: 8px;
-    width: 200px;
-    text-align: center;
-    transition: all 0.3s ease;
-}
-
-.module span {
-    font-size: 18px;
-    color: #00ccff;
-}
-
-.module-desc {
-    font-size: 14px;
-    color: #b3e0ff;
-    margin-top: 5px;
-}
-
-.module[data-type="ml"]:hover {
-    box-shadow: 0 0 30px rgba(255, 0, 255, 0.6);
-    transform: scale(1.05);
-}
-
-.module[data-type="cyber"]:hover {
-    box-shadow: 0 0 30px rgba(0, 204, 255, 0.6);
-    transform: scale(1.05);
-}
-
-#particle-canvas {
-    position: absolute;
+#space-canvas {
+    position: fixed;
     top: 0;
     left: 0;
     width: 100%;
@@ -165,97 +26,171 @@ body {
     z-index: 0;
 }
 
-/* Animations */
-@keyframes gridPulse {
-    0% { opacity: 0.5; }
-    50% { opacity: 0.8; }
-    100% { opacity: 0.5; }
+.black-hole {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    width: 200px;
+    height: 200px;
+    background: radial-gradient(circle, #000000 30%, rgba(0, 0, 0, 0.7) 60%, transparent 90%);
+    border-radius: 50%;
+    box-shadow: 0 0 40px rgba(255, 255, 255, 0.2);
+    transform: translate(-50%, -50%);
+    z-index: 1;
 }
 
-@keyframes holoGlitch {
-    0% { transform: translate(0); }
-    20% { transform: translate(-3px, 3px); }
-    40% { transform: translate(3px, -3px); }
-    60% { transform: translate(-2px, 2px); }
-    80% { transform: translate(2px, -2px); }
-    100% { transform: translate(0); }
+.code-shards {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 2;
+    pointer-events: none;
 }
 
-@keyframes holoGlitchTop {
-    0% { transform: translate(0); }
-    25% { transform: translate(-4px, 2px); }
-    50% { transform: translate(4px, -2px); }
-    75% { transform: translate(-2px, 4px); }
-    100% { transform: translate(0); }
+.shard {
+    position: absolute;
+    transform: rotateZ(0deg); /* Allow rotation */
+    color: #a0a0a0; /* Slightly grayish tone */
 }
 
-@keyframes holoGlitchBottom {
-    0% { transform: translate(0); }
-    30% { transform: translate(3px, -3px); }
-    60% { transform: translate(-3px, 3px); }
-    90% { transform: translate(2px, -2px); }
-    100% { transform: translate(0); }
+.spaceship {
+    position: absolute;
+    width: 40px;
+    height: 40px;
+    background: url('spaceship.png') no-repeat center/contain; /* Replace with your spaceship image */
+    z-index: 10;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+    filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.5));
 }
 
-@keyframes fadeIn {
-    0% { opacity: 0; transform: translateY(20px); }
-    100% { opacity: 1; transform: translateY(0); }
+.coder-universe {
+    min-height: 100vh;
+    position: relative;
+    z-index: 5;
+    perspective: 1000px;
+}
+
+.floating-item {
+    position: absolute;
+    color: #ffffff;
+    text-decoration: none;
+    padding: 8px 20px;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 5px;
+    background: rgba(255, 255, 255, 0.05);
+    text-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
+}
+
+.letter {
+    font-size: 36px;
+    padding: 5px 10px;
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+}
+
+.cmd-link {
+    font-size: 18px;
+}
+
+.panel {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 300px;
+    background: rgba(15, 15, 20, 0.95);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+    transform: translate(-50%, -50%) rotateY(90deg);
+}
+
+.panel-content {
+    text-align: center;
+    padding: 20px;
+}
+
+.panel-content h2 {
+    font-size: 32px;
+    color: #ffffff;
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.4);
+    margin-bottom: 10px;
+}
+
+.panel-content p {
+    font-size: 16px;
+    color: #c0c0c0;
+    max-width: 250px;
 }
 
 /* Responsive Design */
 @media (max-width: 768px) {
-    .holo-interface {
-        width: 95%;
-        gap: 20px;
+    .letter {
+        font-size: 28px;
     }
 
-    .name {
-        font-size: 48px;
-    }
-
-    .tagline {
+    .cmd-link {
         font-size: 16px;
+        padding: 6px 15px;
     }
 
-    .description {
+    .black-hole {
+        width: 150px;
+        height: 150px;
+    }
+
+    .spaceship {
+        width: 35px;
+        height: 35px;
+    }
+
+    .panel {
+        width: 250px;
+    }
+
+    .panel-content h2 {
+        font-size: 28px;
+    }
+
+    .panel-content p {
         font-size: 14px;
-        max-width: 90%;
-    }
-
-    .nav-link {
-        font-size: 16px;
-        padding: 8px 15px;
-    }
-
-    .module {
-        width: 160px;
     }
 }
 
 @media (max-width: 480px) {
-    .name {
-        font-size: 36px;
+    .letter {
+        font-size: 20px;
     }
 
-    .tagline {
+    .cmd-link {
         font-size: 14px;
+        padding: 5px 12px;
     }
 
-    .description {
+    .black-hole {
+        width: 120px;
+        height: 120px;
+    }
+
+    .spaceship {
+        width: 30px;
+        height: 30px;
+    }
+
+    .panel {
+        width: 200px;
+    }
+
+    .panel-content h2 {
+        font-size: 24px;
+    }
+
+    .panel-content p {
         font-size: 12px;
-    }
-
-    .link-matrix {
-        gap: 10px;
-    }
-
-    .nav-link {
-        font-size: 14px;
-        padding: 6px 12px;
-    }
-
-    .module {
-        width: 100%;
-        max-width: 300px;
     }
 }
