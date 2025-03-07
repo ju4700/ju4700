@@ -9,36 +9,48 @@
 </head>
 <body>
     <canvas id="space-canvas"></canvas>
-    <div class="black-hole" id="black-hole"></div>
-    <div class="code-shards"></div>
-    <div class="spaceship" id="spaceship"></div>
     <section class="coder-universe">
+        <div class="black-hole" id="black-hole"></div>
+        <div class="code-shards"></div>
+        <div class="spaceship" id="spaceship"></div>
         <div class="floating-item letter" id="letter-j">j</div>
         <div class="floating-item letter" id="letter-u">u</div>
         <div class="floating-item letter" id="letter-4">4</div>
         <div class="floating-item letter" id="letter-7">7</div>
         <div class="floating-item letter" id="letter-0">0</div>
         <div class="floating-item letter" id="letter-0-2">0</div>
-        <div class="floating-item cmd-link" data-text="> Projects" id="projects-item" data-action="panel" data-panel="projects-panel">> Projects</div>
-        <div class="floating-item cmd-link" data-text="> Skills" id="skills-item" data-action="panel" data-panel="skills-panel">> Skills</div>
+        <div class="floating-item cmd-link" data-text="> Projects" id="projects-item" data-action="fall">> Projects</div>
         <div class="floating-item cmd-link" data-text="> LinkedIn" id="linkedin-item" data-action="link" data-href="https://bd.linkedin.com/in/jalal-uddin-2952b02ba">> LinkedIn</div>
         <div class="floating-item cmd-link" data-text="> GitHub" id="github-item" data-action="link" data-href="https://github.com/ju4700">> GitHub</div>
-        <!-- Added Debris Elements -->
         <div class="floating-item debris" id="debris-1">~</div>
         <div class="floating-item debris" id="debris-2">*</div>
         <div class="floating-item debris" id="debris-3">%</div>
         <div class="floating-item debris" id="debris-4">!</div>
         <div class="floating-item debris" id="debris-5">#</div>
-        <div class="panel" id="projects-panel">
-            <div class="panel-content">
-                <h2>> Projects</h2>
-                <p>ML analytics, cybersecurity, quantum sims.</p>
+    </section>
+    <section class="projects-section" id="projects-section">
+        <div class="timeline-anchor">
+            <div class="anchor-icon">+</div>
+            <div class="space-rope left" data-project="project-1"></div>
+            <div class="space-rope center" data-project="project-2"></div>
+            <div class="space-rope right" data-project="project-3"></div>
+            <div class="project-tile" id="project-1" data-action="link" data-href="https://example.com/ml-analytics">
+                <div class="tile-content">
+                    <h3>ML Analytics</h3>
+                    <p>Advanced ML models</p>
+                </div>
             </div>
-        </div>
-        <div class="panel" id="skills-panel">
-            <div class="panel-content">
-                <h2>> Skills</h2>
-                <p>Python, TensorFlow, cryptography.</p>
+            <div class="project-tile" id="project-2" data-action="link" data-href="https://example.com/cybersecurity">
+                <div class="tile-content">
+                    <h3>Cybersecurity</h3>
+                    <p>Protective systems</p>
+                </div>
+            </div>
+            <div class="project-tile" id="project-3" data-action="link" data-href="https://example.com/quantum-sims">
+                <div class="tile-content">
+                    <h3>Quantum Sims</h3>
+                    <p>Quantum simulations</p>
+                </div>
             </div>
         </div>
     </section>

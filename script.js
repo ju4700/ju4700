@@ -154,7 +154,6 @@ initShards();
 animateShards();
 
 // GSAP Animations
-// Black Hole
 gsap.to('.black-hole', {
     rotationZ: 360,
     duration: 20,
@@ -180,10 +179,8 @@ const floatingItems = [
     { id: 'letter-0', radius: 330, angle: 4 * Math.PI / 3, angleSpeed: 0.0055 },
     { id: 'letter-0-2', radius: 290, angle: 5 * Math.PI / 3, angleSpeed: 0.0065 },
     { id: 'projects-item', radius: 250, angle: Math.PI / 2, angleSpeed: 0.008 },
-    { id: 'skills-item', radius: 270, angle: 3 * Math.PI / 2, angleSpeed: 0.0075 },
     { id: 'linkedin-item', radius: 230, angle: Math.PI / 4, angleSpeed: 0.009 },
     { id: 'github-item', radius: 240, angle: 5 * Math.PI / 4, angleSpeed: 0.0085 },
-    // Debris Items
     { id: 'debris-1', radius: 280, angle: 0.2, angleSpeed: 0.006 },
     { id: 'debris-2', radius: 260, angle: Math.PI / 2.5, angleSpeed: 0.007 },
     { id: 'debris-3', radius: 300, angle: Math.PI, angleSpeed: 0.005 },
@@ -222,7 +219,55 @@ function updateFloatingItems() {
 
 updateFloatingItems();
 
-// Spaceship Physics with Stronger Black Hole Influence
+// Project Tiles with Ropes
+const projectTiles = [
+    { id: 'project-1', ropeClass: 'left', baseX: -150, baseY: -100, offsetX: 0, offsetY: 0, vx: (Math.random() - 0.5) * 0.5, vy: (Math.random() - 0.5) * 0.5 },
+    { id: 'project-2', ropeClass: 'center', baseX: 0, baseY: -100, offsetX: 0, offsetY: 0, vx: (Math.random() - 0.5) * 0.5, vy: (Math.random() - 0.5) * 0.5 },
+    { id: 'project-3', ropeClass: 'right', baseX: 150, baseY: -100, offsetX: 0, offsetY: 0, vx: (Math.random() - 0.5) * 0.5, vy: (Math.random() - 0.5) * 0.5 }
+];
+
+function updateProjectTiles() {
+    const centerX = window.innerWidth / 2;
+    const centerY = window.innerHeight / 2;
+
+    projectTiles.forEach(item => {
+        const tile = document.getElementById(item.id);
+        const rope = document.querySelector(`.space-rope.${item.ropeClass}`);
+
+        // Random floating motion
+        item.offsetX += item.vx;
+        item.offsetY += item.vy;
+
+        // Limit range and reverse velocity for bounce
+        if (Math.abs(item.offsetX) > 50) item.vx *= -0.8;
+        if (Math.abs(item.offsetY) > 50) item.vy *= -0.8;
+
+        // Position tile at rope end
+        const ropeAngle = rope.style.transform.includes('-45deg') ? -Math.PI / 4 : rope.style.transform.includes('45deg') ? Math.PI / 4 : 0;
+        const ropeLength = gsap.getProperty(rope, 'height');
+        const ropeEndX = centerX + item.baseX + Math.cos(ropeAngle) * ropeLength;
+        const ropeEndY = centerY + item.baseY + Math.sin(ropeAngle) * ropeLength;
+
+        const tileX = ropeEndX + item.offsetX - 100; // Center tile (width/2)
+        const tileY = ropeEndY + item.offsetY - 60;  // Center tile (height/2)
+
+        gsap.to(tile, {
+            x: tileX,
+            y: tileY,
+            duration: 0.1,
+            ease: 'none'
+        });
+
+        // Update rope length dynamically (optional realism)
+        const distance = Math.sqrt(item.offsetX * item.offsetX + item.offsetY * item.offsetY);
+        const maxLength = 200 + distance * 0.5;
+        gsap.set(rope, { height: Math.min(maxLength, 250) });
+    });
+
+    requestAnimationFrame(updateProjectTiles);
+}
+
+// Spaceship Physics
 const spaceship = document.getElementById('spaceship');
 let ship = {
     x: window.innerWidth / 2,
@@ -250,9 +295,123 @@ function screenShake() {
         repeat: 5,
         yoyo: true,
         ease: 'power2.inOut',
+        onComplete: () => gsap.set('body', { x: 0, y: 0 })
+    });
+}
+
+// Fall and Show Projects
+let isAnimating = false;
+
+function fallAndShowProjects() {
+    if (isAnimating) return;
+    isAnimating = true;
+
+    const projectsSection = document.getElementById('projects-section');
+    const coderUniverse = document.querySelector('.coder-universe');
+    const duration = 2;
+
+    gsap.to(ship, {
+        y: window.innerHeight - 20,
+        duration: duration,
+        ease: 'power2.inOut',
+        onUpdate: () => gsap.set(spaceship, { x: ship.x, y: ship.y })
+    });
+
+    gsap.to(projectsSection, {
+        top: 0,
+        duration: duration,
+        ease: 'power2.inOut',
         onComplete: () => {
-            gsap.set('body', { x: 0, y: 0 }); // Reset position
+            animateProjects();
+            updateProjectTiles(); // Start floating tiles
+            isAnimating = false;
         }
+    });
+
+    // Fade out main section
+    gsap.to(coderUniverse, {
+        opacity: 0,
+        duration: duration,
+        ease: 'power2.inOut'
+    });
+}
+
+// Animate Projects with Realistic Wobbly Ropes
+function animateProjects() {
+    const ropes = document.querySelectorAll('.space-rope');
+    const tiles = document.querySelectorAll('.project-tile');
+
+    ropes.forEach((rope, index) => {
+        gsap.to(rope, {
+            height: 200,
+            duration: 1.5,
+            ease: 'elastic.out(1, 0.3)', // Tighter elastic for realism
+            delay: index * 0.3,
+            onUpdate: () => {
+                const progress = gsap.getProperty(rope, 'height') / 200;
+                const wobble = Math.sin(progress * Math.PI * 6) * (1 - progress) * 10;
+                gsap.set(rope, { x: wobble });
+            },
+            onComplete: () => {
+                gsap.to(rope, {
+                    x: 0,
+                    duration: 3,
+                    ease: 'sine.inOut',
+                    repeat: -1,
+                    yoyo: true,
+                    keyframes: {
+                        '0%': { x: 0 },
+                        '25%': { x: 5 },
+                        '75%': { x: -5 },
+                        '100%': { x: 0 }
+                    }
+                });
+            }
+        });
+    });
+
+    tiles.forEach((tile, index) => {
+        gsap.to(tile, {
+            opacity: 1,
+            duration: 1,
+            ease: 'power2.out',
+            delay: index * 0.3 + 0.5
+        });
+    });
+}
+
+// Reset Projects Section
+function resetProjects() {
+    if (isAnimating) return;
+    isAnimating = true;
+
+    const projectsSection = document.getElementById('projects-section');
+    const coderUniverse = document.querySelector('.coder-universe');
+    const duration = 2;
+
+    gsap.to(ship, {
+        y: window.innerHeight - 50,
+        duration: duration,
+        ease: 'power2.inOut',
+        onUpdate: () => gsap.set(spaceship, { x: ship.x, y: ship.y })
+    });
+
+    gsap.to(projectsSection, {
+        top: '100vh',
+        duration: duration,
+        ease: 'power2.inOut',
+        onComplete: () => {
+            gsap.set('.space-rope', { height: 0, x: 0 });
+            gsap.set('.project-tile', { opacity: 0 });
+            isAnimating = false;
+        }
+    });
+
+    // Fade in main section
+    gsap.to(coderUniverse, {
+        opacity: 1,
+        duration: duration,
+        ease: 'power2.inOut'
     });
 }
 
@@ -260,38 +419,40 @@ function moveSpaceship() {
     const thrust = 1.0;
     const bhX = window.innerWidth / 2;
     const bhY = window.innerHeight / 2;
+    const projectsSection = document.getElementById('projects-section');
 
-    if (keys['w']) ship.vy -= thrust;
-    if (keys['s']) ship.vy += thrust;
-    if (keys['a']) ship.vx -= thrust;
-    if (keys['d']) ship.vx += thrust;
+    if (!isAnimating) {
+        if (keys['w']) ship.vy -= thrust;
+        if (keys['s']) ship.vy += thrust;
+        if (keys['a']) ship.vx -= thrust;
+        if (keys['d']) ship.vx += thrust;
 
-    const dx = bhX - ship.x;
-    const dy = bhY - ship.y;
-    const distance = Math.sqrt(dx * dx + dy * dy) || 1;
-    const force = (G * blackHoleMass * ship.mass) / (distance * distance);
-    const ax = (force * dx) / distance;
-    const ay = (force * dy) / distance;
-    ship.vx += ax;
-    ship.vy += ay;
+        const dx = bhX - ship.x;
+        const dy = bhY - ship.y;
+        const distance = Math.sqrt(dx * dx + dy * dy) || 1;
+        const force = (G * blackHoleMass * ship.mass) / (distance * distance);
+        const ax = (force * dx) / distance;
+        const ay = (force * dy) / distance;
+        ship.vx += ax;
+        ship.vy += ay;
 
-    ship.vx *= ship.friction;
-    ship.vy *= ship.friction;
+        ship.vx *= ship.friction;
+        ship.vy *= ship.friction;
 
-    ship.x += ship.vx;
-    ship.y += ship.vy;
+        ship.x += ship.vx;
+        ship.y += ship.vy;
 
-    if (ship.x < 20) { ship.x = 20; ship.vx = -ship.vx * 0.5; }
-    if (ship.x > window.innerWidth - 20) { ship.x = window.innerWidth - 20; ship.vx = -ship.vx * 0.5; }
-    if (ship.y < 20) { ship.y = 20; ship.vy = -ship.vy * 0.5; }
-    if (ship.y > window.innerHeight - 20) { ship.y = window.innerHeight - 20; ship.vy = -ship.vy * 0.5; }
+        if (ship.x < 20) { ship.x = 20; ship.vx = -ship.vx * 0.5; }
+        if (ship.x > window.innerWidth - 20) { ship.x = window.innerWidth - 20; ship.vx = -ship.vx * 0.5; }
+        if (ship.y < 20) { 
+            ship.y = 20; 
+            ship.vy = -ship.vy * 0.5; 
+            if (projectsSection.style.top === '0px') resetProjects();
+        }
+        if (ship.y > window.innerHeight - 20) { ship.y = window.innerHeight - 20; ship.vy = -ship.vy * 0.5; }
+    }
 
-    gsap.to(spaceship, {
-        x: ship.x,
-        y: ship.y,
-        duration: 0.1,
-        ease: 'none'
-    });
+    gsap.set(spaceship, { x: ship.x, y: ship.y });
 
     checkCollisions();
     requestAnimationFrame(moveSpaceship);
@@ -300,13 +461,13 @@ function moveSpaceship() {
 moveSpaceship();
 
 // Collision Detection and Interaction
-let activePanel = null;
-let lastDebrisCollision = 0; // Cooldown for shake effect
+let lastDebrisCollision = 0;
 
 function checkCollisions() {
     const shipRect = spaceship.getBoundingClientRect();
     const now = Date.now();
 
+    // Main floating items
     floatingItems.forEach(item => {
         const element = document.getElementById(item.id);
         const rect = element.getBoundingClientRect();
@@ -317,7 +478,7 @@ function checkCollisions() {
             shipRect.top < rect.bottom &&
             shipRect.bottom > rect.top
         ) {
-            if (element.classList.contains('debris') && now - lastDebrisCollision > 500) { // 500ms cooldown
+            if (element.classList.contains('debris') && now - lastDebrisCollision > 500) {
                 screenShake();
                 lastDebrisCollision = now;
             } else if (!element.classList.contains('debris')) {
@@ -327,31 +488,8 @@ function checkCollisions() {
                     if (action === 'link') {
                         const href = element.getAttribute('data-href');
                         if (href) window.open(href, '_blank');
-                    } else if (action === 'panel') {
-                        const panelId = element.getAttribute('data-panel');
-                        const panel = document.getElementById(panelId);
-                        if (activePanel && activePanel !== panel) {
-                            gsap.to(activePanel, {
-                                opacity: 0,
-                                rotationY: -90,
-                                duration: 0.5,
-                                ease: 'power2.in',
-                                onComplete: () => { activePanel.style.pointerEvents = 'none'; }
-                            });
-                        }
-                        if (activePanel !== panel) {
-                            gsap.fromTo(panel, 
-                                { opacity: 0, rotationY: 90 },
-                                { 
-                                    opacity: 1, 
-                                    rotationY: 0, 
-                                    duration: 0.5, 
-                                    ease: 'power2.out',
-                                    onStart: () => { panel.style.pointerEvents = 'auto'; }
-                                }
-                            );
-                            activePanel = panel;
-                        }
+                    } else if (action === 'fall') {
+                        fallAndShowProjects();
                     }
                     keys['enter'] = false;
                 }
@@ -360,21 +498,37 @@ function checkCollisions() {
             gsap.to(element, { scale: 1, duration: 0.2, ease: 'power2.out' });
         }
     });
+
+    // Project tiles
+    projectTiles.forEach(item => {
+        const element = document.getElementById(item.id);
+        const rect = element.getBoundingClientRect();
+
+        if (
+            shipRect.left < rect.right &&
+            shipRect.right > rect.left &&
+            shipRect.top < rect.bottom &&
+            shipRect.bottom > rect.top
+        ) {
+            gsap.to(element, { scale: 1.1, duration: 0.2, ease: 'power2.out' });
+            if (keys['enter']) {
+                const action = element.getAttribute('data-action');
+                if (action === 'link') {
+                    const href = element.getAttribute('data-href');
+                    if (href) window.open(href, '_blank');
+                }
+                keys['enter'] = false;
+            }
+        } else {
+            gsap.to(element, { scale: 1, duration: 0.2, ease: 'power2.out' });
+        }
+    });
 }
 
-// Close Panel on Spacebar
+// Reset on Spacebar (optional)
 document.addEventListener('keydown', (e) => {
-    if (e.key === ' ' && activePanel) {
-        gsap.to(activePanel, {
-            opacity: 0,
-            rotationY: -90,
-            duration: 0.5,
-            ease: 'power2.in',
-            onComplete: () => {
-                activePanel.style.pointerEvents = 'none';
-                activePanel = null;
-            }
-        });
+    if (e.key === ' ' && !isAnimating) {
+        resetProjects();
     }
 });
 
@@ -387,6 +541,6 @@ window.addEventListener('resize', () => {
         shard.y = window.innerHeight / 2 + (Math.random() - 0.5) * 600;
     });
     ship.x = window.innerWidth / 2;
-    ship.y = window.innerHeight - 50;
+    ship.y = Math.min(ship.y, window.innerHeight - 20);
     gsap.set(spaceship, { x: ship.x, y: ship.y });
 });

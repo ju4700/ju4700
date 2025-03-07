@@ -11,9 +11,8 @@ body {
     background: #000000;
     color: #ffffff;
     font-family: 'Russo', Arial, sans-serif;
-    min-height: 100vh;
     overflow: hidden;
-    position: relative;
+    height: 100%;
     cursor: none;
 }
 
@@ -22,12 +21,20 @@ body {
     top: 0;
     left: 0;
     width: 100%;
-    height: 100%;
+    height: 100vh;
     z-index: 0;
 }
 
+.coder-universe {
+    height: 100vh;
+    position: relative;
+    z-index: 5;
+    perspective: 1000px;
+    transition: opacity 1s ease; /* For fading effect */
+}
+
 .black-hole {
-    position: fixed;
+    position: absolute;
     top: 50%;
     left: 50%;
     width: 200px;
@@ -40,7 +47,7 @@ body {
 }
 
 .code-shards {
-    position: fixed;
+    position: absolute;
     top: 0;
     left: 0;
     width: 100%;
@@ -56,21 +63,14 @@ body {
 }
 
 .spaceship {
-    position: absolute;
+    position: fixed;
     width: 40px;
     height: 40px;
-    background: url('spaceship.png') no-repeat center/contain; /* Replace with your spaceship image */
+    background: url('spaceship.png') no-repeat center/contain;
     z-index: 10;
     transform: translate(-50%, -50%);
     pointer-events: none;
     filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.5));
-}
-
-.coder-universe {
-    min-height: 100vh;
-    position: relative;
-    z-index: 5;
-    perspective: 1000px;
 }
 
 .floating-item {
@@ -97,117 +97,123 @@ body {
 .debris {
     font-size: 24px;
     padding: 5px;
-    color: #808080; /* Grayish debris color */
+    color: #808080;
     border: none;
     background: none;
     text-shadow: 0 0 5px rgba(255, 255, 255, 0.2);
 }
 
-.panel {
+.projects-section {
+    height: 100vh;
+    background: rgba(10, 10, 15, 0.9);
+    position: absolute;
+    top: 100vh;
+    left: 0;
+    width: 100%;
+    z-index: 4;
+    opacity: 1;
+}
+
+.timeline-anchor {
     position: absolute;
     top: 50%;
     left: 50%;
-    width: 300px;
-    background: rgba(15, 15, 20, 0.95);
-    border: 1px solid rgba(255, 255, 255, 0.3);
+    transform: translate(-50%, -50%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.anchor-icon {
+    font-size: 48px;
+    color: #ffffff;
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+    z-index: 2;
+}
+
+.space-rope {
+    position: absolute;
+    width: 2px;
+    height: 0;
+    background: linear-gradient(to bottom, rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 0.2));
+    transform-origin: top center;
+    z-index: 1;
+    box-shadow: 0 0 5px rgba(255, 255, 255, 0.3); /* Glow for realism */
+}
+
+.space-rope.left {
+    transform: rotate(-45deg);
+    top: -100px;
+    left: -150px;
+}
+
+.space-rope.center {
+    transform: rotate(0deg);
+    top: -100px;
+    left: 0;
+}
+
+.space-rope.right {
+    transform: rotate(45deg);
+    top: -100px;
+    left: 150px;
+}
+
+.project-tile {
+    position: absolute;
+    width: 200px;
+    height: 120px;
+    background: rgba(20, 20, 30, 0.8);
     border-radius: 10px;
     display: flex;
     align-items: center;
     justify-content: center;
+    box-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
     opacity: 0;
-    pointer-events: none;
-    transform: translate(-50%, -50%) rotateY(90deg);
+    z-index: 2;
 }
 
-.panel-content {
+.tile-content {
     text-align: center;
-    padding: 20px;
+    padding: 10px;
 }
 
-.panel-content h2 {
-    font-size: 32px;
+.tile-content h3 {
+    font-size: 20px;
     color: #ffffff;
     text-shadow: 0 0 10px rgba(255, 255, 255, 0.4);
-    margin-bottom: 10px;
+    margin-bottom: 5px;
 }
 
-.panel-content p {
-    font-size: 16px;
+.tile-content p {
+    font-size: 12px;
     color: #c0c0c0;
-    max-width: 250px;
+    max-width: 180px;
 }
 
 /* Responsive Design */
 @media (max-width: 768px) {
-    .letter {
-        font-size: 28px;
-    }
-
-    .cmd-link {
-        font-size: 16px;
-        padding: 6px 15px;
-    }
-
-    .debris {
-        font-size: 20px;
-    }
-
-    .black-hole {
-        width: 150px;
-        height: 150px;
-    }
-
-    .spaceship {
-        width: 35px;
-        height: 35px;
-    }
-
-    .panel {
-        width: 250px;
-    }
-
-    .panel-content h2 {
-        font-size: 28px;
-    }
-
-    .panel-content p {
-        font-size: 14px;
-    }
+    .letter { font-size: 28px; }
+    .cmd-link { font-size: 16px; padding: 6px 15px; }
+    .debris { font-size: 20px; }
+    .black-hole { width: 150px; height: 150px; }
+    .spaceship { width: 35px; height: 35px; }
+    .anchor-icon { font-size: 36px; }
+    .space-rope { height: 150px; }
+    .project-tile { width: 150px; height: 90px; }
+    .tile-content h3 { font-size: 18px; }
+    .tile-content p { font-size: 10px; }
 }
 
 @media (max-width: 480px) {
-    .letter {
-        font-size: 20px;
-    }
-
-    .cmd-link {
-        font-size: 14px;
-        padding: 5px 12px;
-    }
-
-    .debris {
-        font-size: 16px;
-    }
-
-    .black-hole {
-        width: 120px;
-        height: 120px;
-    }
-
-    .spaceship {
-        width: 30px;
-        height: 30px;
-    }
-
-    .panel {
-        width: 200px;
-    }
-
-    .panel-content h2 {
-        font-size: 24px;
-    }
-
-    .panel-content p {
-        font-size: 12px;
-    }
+    .letter { font-size: 20px; }
+    .cmd-link { font-size: 14px; padding: 5px 12px; }
+    .debris { font-size: 16px; }
+    .black-hole { width: 120px; height: 120px; }
+    .spaceship { width: 30px; height: 30px; }
+    .anchor-icon { font-size: 28px; }
+    .space-rope { height: 100px; }
+    .project-tile { width: 120px; height: 70px; }
+    .tile-content h3 { font-size: 16px; }
+    .tile-content p { font-size: 9px; }
 }
