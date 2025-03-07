@@ -51,8 +51,8 @@ body {
 
 .shard {
     position: absolute;
-    transform: rotateZ(0deg); /* Allow rotation */
-    color: #a0a0a0; /* Slightly grayish tone */
+    transform: rotateZ(0deg);
+    color: #a0a0a0;
 }
 
 .spaceship {
@@ -92,6 +92,15 @@ body {
 
 .cmd-link {
     font-size: 18px;
+}
+
+.debris {
+    font-size: 24px;
+    padding: 5px;
+    color: #808080; /* Grayish debris color */
+    border: none;
+    background: none;
+    text-shadow: 0 0 5px rgba(255, 255, 255, 0.2);
 }
 
 .panel {
@@ -139,6 +148,10 @@ body {
         padding: 6px 15px;
     }
 
+    .debris {
+        font-size: 20px;
+    }
+
     .black-hole {
         width: 150px;
         height: 150px;
@@ -170,6 +183,10 @@ body {
     .cmd-link {
         font-size: 14px;
         padding: 5px 12px;
+    }
+
+    .debris {
+        font-size: 16px;
     }
 
     .black-hole {

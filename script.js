@@ -64,7 +64,7 @@ function animateStars() {
 initStars();
 animateStars();
 
-// 3D Black Hole Code Shards (More Correct, Fixed Grayish Color)
+// 3D Black Hole Code Shards
 const shardContainer = document.querySelector('.code-shards');
 const shards = [];
 const shardCount = 25;
@@ -81,7 +81,7 @@ class CodeShard {
         this.size = Math.random() * 20 + 5;
         this.rotation = Math.random() * 360;
         this.rotationSpeed = (Math.random() - 0.5) * 0.05;
-        this.opacity = Math.random() * 0.4 + 0.6; // Slightly varied opacity (0.6-1)
+        this.opacity = Math.random() * 0.4 + 0.6;
         shardContainer.appendChild(this.element);
         this.updateStyle();
     }
@@ -104,7 +104,6 @@ class CodeShard {
         this.y += this.vy;
         this.rotation += this.rotationSpeed;
 
-        // Confine within 600px radius with smooth bounce
         const dx = bhX - this.x;
         const dy = bhY - this.y;
         const distance = Math.sqrt(dx * dx + dy * dy);
@@ -112,15 +111,14 @@ class CodeShard {
             const angle = Math.atan2(dy, dx);
             this.x = bhX + Math.cos(angle) * 600;
             this.y = bhY + Math.sin(angle) * 600;
-            this.vx = -this.vx * 0.7; // Consistent dampening
+            this.vx = -this.vx * 0.7;
             this.vy = -this.vy * 0.7;
-            this.rotationSpeed = (Math.random() - 0.5) * 0.05; // Reset spin
+            this.rotationSpeed = (Math.random() - 0.5) * 0.05;
         }
 
-        // Smooth velocity adjustments
-        this.vx = Math.min(Math.max(this.vx, -1.5), 1.5); // Cap velocity
+        this.vx = Math.min(Math.max(this.vx, -1.5), 1.5);
         this.vy = Math.min(Math.max(this.vy, -1.5), 1.5);
-        if (Math.random() < 0.01) { // 1% chance for subtle nudge
+        if (Math.random() < 0.01) {
             this.vx += (Math.random() - 0.5) * 0.1;
             this.vy += (Math.random() - 0.5) * 0.1;
         }
@@ -136,7 +134,7 @@ class CodeShard {
             rotationZ: this.rotation,
             opacity: this.opacity,
             fontSize: `${this.size}px`,
-            textShadow: '0 0 5px rgba(255, 255, 255, 0.3)' // Fixed subtle glow
+            textShadow: '0 0 5px rgba(255, 255, 255, 0.3)'
         });
     }
 }
@@ -173,7 +171,7 @@ gsap.to('.black-hole', {
     yoyo: true
 });
 
-// Floating Items with Diverse, Slower Motion
+// Floating Items with Debris
 const floatingItems = [
     { id: 'letter-j', radius: 320, angle: 0, angleSpeed: 0.005 },
     { id: 'letter-u', radius: 300, angle: Math.PI / 3, angleSpeed: 0.007 },
@@ -184,7 +182,13 @@ const floatingItems = [
     { id: 'projects-item', radius: 250, angle: Math.PI / 2, angleSpeed: 0.008 },
     { id: 'skills-item', radius: 270, angle: 3 * Math.PI / 2, angleSpeed: 0.0075 },
     { id: 'linkedin-item', radius: 230, angle: Math.PI / 4, angleSpeed: 0.009 },
-    { id: 'github-item', radius: 240, angle: 5 * Math.PI / 4, angleSpeed: 0.0085 }
+    { id: 'github-item', radius: 240, angle: 5 * Math.PI / 4, angleSpeed: 0.0085 },
+    // Debris Items
+    { id: 'debris-1', radius: 280, angle: 0.2, angleSpeed: 0.006 },
+    { id: 'debris-2', radius: 260, angle: Math.PI / 2.5, angleSpeed: 0.007 },
+    { id: 'debris-3', radius: 300, angle: Math.PI, angleSpeed: 0.005 },
+    { id: 'debris-4', radius: 240, angle: 3 * Math.PI / 2, angleSpeed: 0.008 },
+    { id: 'debris-5', radius: 270, angle: 2 * Math.PI / 1.5, angleSpeed: 0.0065 }
 ];
 
 floatingItems.forEach(item => {
@@ -218,7 +222,7 @@ function updateFloatingItems() {
 
 updateFloatingItems();
 
-// Spaceship Physics with Constant Black Hole Influence
+// Spaceship Physics with Stronger Black Hole Influence
 const spaceship = document.getElementById('spaceship');
 let ship = {
     x: window.innerWidth / 2,
@@ -226,10 +230,10 @@ let ship = {
     vx: 0,
     vy: 0,
     mass: 5,
-    friction: 0.95
+    friction: 0.92
 };
-const G = 0.005;
-const blackHoleMass = 500;
+const G = 0.05;
+const blackHoleMass = 1000;
 
 gsap.set(spaceship, { x: ship.x, y: ship.y });
 
@@ -237,8 +241,23 @@ const keys = {};
 document.addEventListener('keydown', (e) => { keys[e.key.toLowerCase()] = true; });
 document.addEventListener('keyup', (e) => { keys[e.key.toLowerCase()] = false; });
 
+// Screen Shake Function
+function screenShake() {
+    gsap.to('body', {
+        x: '+=5',
+        y: '+=5',
+        duration: 0.05,
+        repeat: 5,
+        yoyo: true,
+        ease: 'power2.inOut',
+        onComplete: () => {
+            gsap.set('body', { x: 0, y: 0 }); // Reset position
+        }
+    });
+}
+
 function moveSpaceship() {
-    const thrust = 0.5;
+    const thrust = 1.0;
     const bhX = window.innerWidth / 2;
     const bhY = window.innerHeight / 2;
 
@@ -247,7 +266,6 @@ function moveSpaceship() {
     if (keys['a']) ship.vx -= thrust;
     if (keys['d']) ship.vx += thrust;
 
-    // Black hole influence always active
     const dx = bhX - ship.x;
     const dy = bhY - ship.y;
     const distance = Math.sqrt(dx * dx + dy * dy) || 1;
@@ -257,14 +275,12 @@ function moveSpaceship() {
     ship.vx += ax;
     ship.vy += ay;
 
-    // Apply friction
     ship.vx *= ship.friction;
     ship.vy *= ship.friction;
 
     ship.x += ship.vx;
     ship.y += ship.vy;
 
-    // Boundary checks with bounce
     if (ship.x < 20) { ship.x = 20; ship.vx = -ship.vx * 0.5; }
     if (ship.x > window.innerWidth - 20) { ship.x = window.innerWidth - 20; ship.vx = -ship.vx * 0.5; }
     if (ship.y < 20) { ship.y = 20; ship.vy = -ship.vy * 0.5; }
@@ -285,9 +301,11 @@ moveSpaceship();
 
 // Collision Detection and Interaction
 let activePanel = null;
+let lastDebrisCollision = 0; // Cooldown for shake effect
 
 function checkCollisions() {
     const shipRect = spaceship.getBoundingClientRect();
+    const now = Date.now();
 
     floatingItems.forEach(item => {
         const element = document.getElementById(item.id);
@@ -299,41 +317,46 @@ function checkCollisions() {
             shipRect.top < rect.bottom &&
             shipRect.bottom > rect.top
         ) {
-            gsap.to(element, { scale: 1.1, duration: 0.2, ease: 'power2.out' });
-            if (keys['enter']) {
-                const action = element.getAttribute('data-action');
-                if (action === 'link') {
-                    const href = element.getAttribute('data-href');
-                    if (href) window.open(href, '_blank');
-                } else if (action === 'panel') {
-                    const panelId = element.getAttribute('data-panel');
-                    const panel = document.getElementById(panelId);
-                    if (activePanel && activePanel !== panel) {
-                        gsap.to(activePanel, {
-                            opacity: 0,
-                            rotationY: -90,
-                            duration: 0.5,
-                            ease: 'power2.in',
-                            onComplete: () => { activePanel.style.pointerEvents = 'none'; }
-                        });
+            if (element.classList.contains('debris') && now - lastDebrisCollision > 500) { // 500ms cooldown
+                screenShake();
+                lastDebrisCollision = now;
+            } else if (!element.classList.contains('debris')) {
+                gsap.to(element, { scale: 1.1, duration: 0.2, ease: 'power2.out' });
+                if (keys['enter']) {
+                    const action = element.getAttribute('data-action');
+                    if (action === 'link') {
+                        const href = element.getAttribute('data-href');
+                        if (href) window.open(href, '_blank');
+                    } else if (action === 'panel') {
+                        const panelId = element.getAttribute('data-panel');
+                        const panel = document.getElementById(panelId);
+                        if (activePanel && activePanel !== panel) {
+                            gsap.to(activePanel, {
+                                opacity: 0,
+                                rotationY: -90,
+                                duration: 0.5,
+                                ease: 'power2.in',
+                                onComplete: () => { activePanel.style.pointerEvents = 'none'; }
+                            });
+                        }
+                        if (activePanel !== panel) {
+                            gsap.fromTo(panel, 
+                                { opacity: 0, rotationY: 90 },
+                                { 
+                                    opacity: 1, 
+                                    rotationY: 0, 
+                                    duration: 0.5, 
+                                    ease: 'power2.out',
+                                    onStart: () => { panel.style.pointerEvents = 'auto'; }
+                                }
+                            );
+                            activePanel = panel;
+                        }
                     }
-                    if (activePanel !== panel) {
-                        gsap.fromTo(panel, 
-                            { opacity: 0, rotationY: 90 },
-                            { 
-                                opacity: 1, 
-                                rotationY: 0, 
-                                duration: 0.5, 
-                                ease: 'power2.out',
-                                onStart: () => { panel.style.pointerEvents = 'auto'; }
-                            }
-                        );
-                        activePanel = panel;
-                    }
+                    keys['enter'] = false;
                 }
-                keys['enter'] = false;
             }
-        } else {
+        } else if (!element.classList.contains('debris')) {
             gsap.to(element, { scale: 1, duration: 0.2, ease: 'power2.out' });
         }
     });
