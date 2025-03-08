@@ -506,7 +506,7 @@ function animateProjects() {
     tiles.forEach((tile, index) => {
         let radius;
         if (index === 4) {
-            radius = 150;
+            radius = 190;
         } else {
             radius = 200 + index * 50;
         }
