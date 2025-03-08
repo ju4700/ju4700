@@ -103,6 +103,26 @@ body {
     text-shadow: 0 0 5px rgba(255, 255, 255, 0.2);
 }
 
+.space-vessel-string {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: #ffffff;
+    font-size: 48px;
+    text-shadow: 0 0 15px rgba(248, 254, 255, 0.8);
+    opacity: 0;
+    z-index: 3;
+    pointer-events: none;
+    white-space: nowrap;
+}
+
+.space-vessel-string span {
+    display: inline-block;
+    margin: 0 4px;
+    transition: all 0.3s ease;
+}
+
 .projects-section {
     height: 100vh;
     background: rgba(10, 10, 15, 0.9);
@@ -163,6 +183,17 @@ body {
     color: #a0a0a0;
 }
 
+/* Updated Nebula Burst Style (White Theme) */
+.nebula-burst {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 300px;
+    height: 300px;
+    pointer-events: none;
+    z-index: 4;
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
     .letter { font-size: 28px; }
@@ -174,6 +205,7 @@ body {
     .project-tile { width: 150px; height: 90px; }
     .tile-content h3 { font-size: 18px; }
     .tile-content p { font-size: 10px; }
+    .space-vessel-string { font-size: 36px; }
 }
 
 @media (max-width: 480px) {
@@ -186,4 +218,5 @@ body {
     .project-tile { width: 120px; height: 70px; }
     .tile-content h3 { font-size: 16px; }
     .tile-content p { font-size: 9px; }
+    .space-vessel-string { font-size: 24px; }
 }

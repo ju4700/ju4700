@@ -1,6 +1,5 @@
 gsap.registerPlugin();
 
-// Space Background with White Stars
 const canvas = document.getElementById('space-canvas');
 const ctx = canvas.getContext('2d');
 
@@ -63,7 +62,6 @@ function animateStars() {
 initStars();
 animateStars();
 
-// 3D Black Hole Code Shards
 const shardContainer = document.querySelector('.code-shards');
 const shards = [];
 const shardCount = 25;
@@ -145,7 +143,6 @@ function animateShards() {
 initShards();
 animateShards();
 
-// Black Hole Animation
 gsap.to('.black-hole', {
     rotationZ: 360,
     duration: 20,
@@ -162,7 +159,6 @@ gsap.to('.black-hole', {
     yoyo: true
 });
 
-// Floating Items
 const floatingItems = [
     { id: 'letter-j', radius: 320, angle: 0, angleSpeed: 0.005 },
     { id: 'letter-u', radius: 300, angle: Math.PI / 3, angleSpeed: 0.007 },
@@ -211,7 +207,219 @@ function updateFloatingItems() {
 
 updateFloatingItems();
 
-// Spaceship Physics
+function animateSpaceVesselString(stringId) {
+    const element = document.getElementById(stringId);
+    if (!element) return console.error(`Element ${stringId} not found`);
+    const text = element.textContent;
+    const chars = text.split('');
+
+    element.innerHTML = '';
+    element.style.opacity = 1;
+    element.style.position = 'absolute';
+    element.style.left = '50%';
+    element.style.top = '50%';
+    element.style.transform = 'translate(-50%, -50%)';
+
+    createNebulaBurst();
+
+    let dimOverlay = document.getElementById('dim-overlay');
+    if (!dimOverlay) {
+        dimOverlay = document.createElement('div');
+        dimOverlay.id = 'dim-overlay';
+        dimOverlay.style.position = 'fixed';
+        dimOverlay.style.top = '0';
+        dimOverlay.style.left = '0';
+        dimOverlay.style.width = '100%';
+        dimOverlay.style.height = '100%';
+        dimOverlay.style.background = 'rgba(0, 0, 0, 0.5)';
+        dimOverlay.style.zIndex = '999';
+        dimOverlay.style.opacity = '0';
+        document.body.appendChild(dimOverlay);
+    }
+
+    gsap.to(dimOverlay, {
+        opacity: 0.5,
+        duration: 0.5,
+        ease: 'power2.out',
+        onComplete: () => {
+            gsap.to(dimOverlay, {
+                opacity: 0,
+                delay: 2.5,
+                duration: 0.5,
+                ease: 'power2.in'
+            });
+        }
+    });
+
+    const baseSpacing = 30; 
+    const minDistance = 35; 
+    const positions = [];
+
+    chars.forEach((char, index) => {
+        const charSpan = document.createElement('span');
+        charSpan.textContent = char;
+        charSpan.style.display = 'inline-block';
+        charSpan.style.margin = '0 2px';
+        element.appendChild(charSpan);
+
+        const baseX = (index - (chars.length - 1) / 2) * baseSpacing; 
+        const baseY = 0; 
+
+        let randomXOffset = (Math.random() - 0.5) * 10; 
+        let randomYOffset = (Math.random() - 0.5) * 20; 
+        let randomX = baseX + randomXOffset;
+        let randomY = baseY + randomYOffset;
+
+        positions.push({ x: randomX, y: randomY, span: charSpan });
+    });
+
+    for (let i = 0; i < positions.length; i++) {
+        for (let j = 0; j < positions.length; j++) {
+            if (i === j) continue;
+
+            let pos1 = positions[i];
+            let pos2 = positions[j];
+            const dx = pos1.x - pos2.x;
+            const dy = pos1.y - pos2.y;
+            const distance = Math.sqrt(dx * dx + dy * dy);
+
+            if (distance < minDistance && distance > 0) {
+                const angle = Math.atan2(dy, dx);
+                const adjustX = Math.cos(angle) * (minDistance - distance) / 2;
+                const adjustY = Math.sin(angle) * (minDistance - distance) / 2;
+
+                positions[i].x += adjustX;
+                positions[i].y += adjustY;
+                positions[j].x -= adjustX;
+                positions[j].y -= adjustY;
+
+                if (Math.abs(positions[i].x - ((i - (chars.length - 1) / 2) * baseSpacing)) > 15) {
+                    positions[i].x = ((i - (chars.length - 1) / 2) * baseSpacing) + (Math.random() - 0.5) * 10;
+                }
+                if (Math.abs(positions[j].x - ((j - (chars.length - 1) / 2) * baseSpacing)) > 15) {
+                    positions[j].x = ((j - (chars.length - 1) / 2) * baseSpacing) + (Math.random() - 0.5) * 10;
+                }
+            }
+        }
+    }
+
+    positions.forEach((pos, index) => {
+        const charSpan = pos.span;
+        gsap.set(charSpan, {
+            x: pos.x,
+            y: pos.y,
+            scale: 0.1,
+            opacity: 0,
+            z: -500
+        });
+
+        const randomDelay = Math.random() * 0.5;
+
+        gsap.to(charSpan, {
+            delay: randomDelay,
+            duration: 1.5,
+            scale: 2,
+            z: 500,
+            opacity: 1,
+            ease: 'power2.out',
+            onStart: () => {
+                if (index === 0) {
+                    gsap.to('body', {
+                        x: '+=10',
+                        y: '+=10',
+                        duration: 0.1,
+                        repeat: 10,
+                        yoyo: true,
+                        ease: 'power2.inOut',
+                        onComplete: () => gsap.set('body', { x: 0, y: 0 })
+                    });
+                }
+            },
+            onComplete: () => {
+                gsap.to(charSpan, {
+                    opacity: 0,
+                    duration: 1,
+                    ease: 'power2.in',
+                    onComplete: () => {
+                        if (index === chars.length - 1) {
+                            element.style.opacity = 0;
+                        }
+                    }
+                });
+            }
+        });
+    });
+}
+
+function createNebulaBurst() {
+    const burstCanvas = document.createElement('canvas');
+    burstCanvas.className = 'nebula-burst';
+    burstCanvas.width = window.innerWidth;
+    burstCanvas.height = window.innerHeight;
+    document.body.appendChild(burstCanvas);
+    const burstCtx = burstCanvas.getContext('2d');
+
+    const burstParticles = [];
+    const burstCount = 100;
+
+    class BurstParticle {
+        constructor() {
+            this.x = window.innerWidth / 2;
+            this.y = window.innerHeight / 2;
+            const angle = Math.random() * Math.PI * 2;
+            const speed = Math.random() * 5 + 3;
+            this.vx = Math.cos(angle) * speed;
+            this.vy = Math.sin(angle) * speed;
+            this.size = Math.random() * 4 + 2;
+            this.opacity = 1;
+            this.life = Math.random() * 60 + 40;
+        }
+
+        update() {
+            this.x += this.vx;
+            this.y += this.vy;
+            this.opacity -= 0.015;
+            this.life -= 1;
+            this.vx *= 0.98;
+            this.vy *= 0.98;
+            const dx = window.innerWidth / 2 - this.x;
+            const dy = window.innerHeight / 2 - this.y;
+            const distance = Math.sqrt(dx * dx + dy * dy) || 1;
+            this.vx += (dx / distance) * 0.02;
+            this.vy += (dy / distance) * 0.02;
+        }
+
+        draw() {
+            burstCtx.beginPath();
+            burstCtx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+            burstCtx.fillStyle = `rgba(255, 255, 255, ${this.opacity})`;
+            burstCtx.shadowBlur = 15;
+            burstCtx.shadowColor = '#ffffff';
+            burstCtx.fill();
+        }
+    }
+
+    for (let i = 0; i < burstCount; i++) {
+        burstParticles.push(new BurstParticle());
+    }
+
+    function animateBurst() {
+        burstCtx.clearRect(0, 0, burstCanvas.width, burstCanvas.height);
+        let allDead = true;
+        burstParticles.forEach(particle => {
+            if (particle.life > 0) {
+                particle.update();
+                particle.draw();
+                allDead = false;
+            }
+        });
+        if (!allDead) requestAnimationFrame(animateBurst);
+        else document.body.removeChild(burstCanvas);
+    }
+
+    animateBurst();
+}
+
 const spaceship = document.getElementById('spaceship');
 let ship = {
     x: window.innerWidth / 2,
@@ -241,7 +449,6 @@ document.addEventListener('keyup', (e) => {
     console.log(`Key up: ${e.key}`);
 });
 
-// Screen Shake
 function screenShake() {
     gsap.to('body', {
         x: '+=5',
@@ -254,7 +461,6 @@ function screenShake() {
     });
 }
 
-// Fall and Show Projects
 let isAnimating = false;
 
 function fallAndShowProjects() {
@@ -292,24 +498,21 @@ function fallAndShowProjects() {
     });
 }
 
-// Animate Projects with Seamless Spacey Effects
 function animateProjects() {
     const tiles = document.querySelectorAll('.project-tile');
     const centerX = window.innerWidth / 2;
     const centerY = window.innerHeight / 2;
 
     tiles.forEach((tile, index) => {
-        // Adjust radius specifically for "Blockchain Dev" (index 4)
         let radius;
-        if (index === 4) { // "Blockchain Dev" tile
-            radius = 190; // Reduced radius to bring it closer to the center
+        if (index === 4) {
+            radius = 150;
         } else {
-            radius = 200 + index * 50; // Original radius for other tiles
+            radius = 200 + index * 50;
         }
-        const startAngle = (index * 2 * Math.PI) / tiles.length; // Evenly space tiles around the center
-        const orbitDuration = 20 - index * 2; // Different orbit speeds
+        const startAngle = (index * 2 * Math.PI) / tiles.length;
+        const orbitDuration = 20 - index * 2;
 
-        // Initial position at starting orbit point
         const initialX = centerX + Math.cos(startAngle) * radius - 100;
         const initialY = centerY + Math.sin(startAngle) * radius - 60;
         gsap.set(tile, {
@@ -319,7 +522,6 @@ function animateProjects() {
             scale: 0
         });
 
-        // Fade in with a smooth scale-up effect
         gsap.to(tile, {
             opacity: 1,
             scale: 1,
@@ -327,7 +529,6 @@ function animateProjects() {
             ease: 'power2.out',
             delay: index * 0.5,
             onComplete: () => {
-                // Pulsing glow effect
                 gsap.to(tile, {
                     boxShadow: '0 0 30px rgba(255, 255, 255, 0.5)',
                     duration: 3,
@@ -338,7 +539,6 @@ function animateProjects() {
             }
         });
 
-        // Orbiting animation using GSAP
         gsap.to(tile, {
             motionPath: {
                 path: [
@@ -354,18 +554,16 @@ function animateProjects() {
             repeat: -1,
             ease: 'linear',
             onUpdate: function() {
-                // Subtle rotation based on position
                 const progress = this.progress();
                 const angle = startAngle + progress * 2 * Math.PI;
                 gsap.set(tile, {
-                    rotation: Math.sin(angle) * 10 // Subtle tilt
+                    rotation: Math.sin(angle) * 10
                 });
             }
         });
     });
 }
 
-// Reset Projects
 function resetProjects() {
     if (isAnimating) return;
     isAnimating = true;
@@ -437,8 +635,10 @@ function moveSpaceship() {
 
 moveSpaceship();
 
-// Collision Detection
 let lastDebrisCollision = 0;
+let lastJalalTrigger = 0;
+let lastDebuggingTrigger = 0;
+const COOLDOWN_MS = 5000;
 
 function checkCollisions() {
     const shipRect = spaceship.getBoundingClientRect();
@@ -454,6 +654,7 @@ function checkCollisions() {
             shipRect.top < rect.bottom &&
             shipRect.bottom > rect.top
         ) {
+            console.log(`Collision with ${item.id}`);
             if (element.classList.contains('debris') && now - lastDebrisCollision > 500) {
                 screenShake();
                 lastDebrisCollision = now;
@@ -464,8 +665,18 @@ function checkCollisions() {
                     if (action === 'link') {
                         const href = element.getAttribute('data-href');
                         if (href) window.open(href, '_blank');
+                        console.log(`Opened ${href}`);
                     } else if (action === 'fall') {
                         fallAndShowProjects();
+                        console.log('Triggered projects');
+                    } else if (item.id === 'letter-j' && now - lastJalalTrigger > COOLDOWN_MS) {
+                        animateSpaceVesselString('vessel-string-1');
+                        lastJalalTrigger = now;
+                        console.log('Triggered Jalal Uddin');
+                    } else if (item.id === 'letter-4' && now - lastDebuggingTrigger > COOLDOWN_MS) {
+                        animateSpaceVesselString('vessel-string-2');
+                        lastDebuggingTrigger = now;
+                        console.log('Triggered Debugging Humanity');
                     }
                     keys['enter'] = false;
                 }
@@ -492,6 +703,7 @@ function checkCollisions() {
                     if (action === 'link') {
                         const href = tile.getAttribute('data-href');
                         if (href) window.open(href, '_blank');
+                        console.log(`Opened project link ${href}`);
                     }
                     keys['enter'] = false;
                 }
@@ -522,4 +734,5 @@ window.addEventListener('load', () => {
     projectsSection.style.display = 'none';
     gsap.set(projectsSection, { top: '100vh' });
     gsap.set('.project-tile', { opacity: 0, scale: 0 });
+    gsap.set('.space-vessel-string', { opacity: 0 });
 });
