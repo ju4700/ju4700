@@ -211,44 +211,6 @@ function updateFloatingItems() {
 
 updateFloatingItems();
 
-// Project Tiles with Ropes
-const projectTiles = [
-    { id: 'project-1', ropeClass: 'left', baseX: -150, baseY: -100, offsetX: 0, offsetY: 0, vx: (Math.random() - 0.5) * 0.5, vy: (Math.random() - 0.5) * 0.5 },
-    { id: 'project-2', ropeClass: 'center', baseX: 0, baseY: -100, offsetX: 0, offsetY: 0, vx: (Math.random() - 0.5) * 0.5, vy: (Math.random() - 0.5) * 0.5 },
-    { id: 'project-3', ropeClass: 'right', baseX: 150, baseY: -100, offsetX: 0, offsetY: 0, vx: (Math.random() - 0.5) * 0.5, vy: (Math.random() - 0.5) * 0.5 }
-];
-
-function updateProjectTiles() {
-    const centerX = window.innerWidth / 2;
-    const centerY = window.innerHeight / 2;
-
-    projectTiles.forEach(item => {
-        const tile = document.getElementById(item.id);
-        const rope = document.querySelector(`.space-rope.${item.ropeClass}`);
-
-        item.offsetX += item.vx;
-        item.offsetY += item.vy;
-
-        if (Math.abs(item.offsetX) > 50) item.vx *= -0.8;
-        if (Math.abs(item.offsetY) > 50) item.vy *= -0.8;
-
-        const ropeAngle = rope.classList.contains('left') ? -Math.PI / 4 : rope.classList.contains('right') ? Math.PI / 4 : 0;
-        const ropeLength = gsap.getProperty(rope, 'height');
-        const ropeEndX = centerX + item.baseX + Math.cos(ropeAngle) * ropeLength;
-        const ropeEndY = centerY + item.baseY + Math.sin(ropeAngle) * ropeLength;
-
-        const tileX = ropeEndX + item.offsetX - 100; // Center tile
-        const tileY = ropeEndY + item.offsetY - 60;
-
-        gsap.set(tile, { x: tileX, y: tileY });
-
-        const distance = Math.sqrt(item.offsetX * item.offsetX + item.offsetY * item.offsetY);
-        gsap.set(rope, { height: Math.min(200 + distance * 0.5, 250) });
-    });
-
-    requestAnimationFrame(updateProjectTiles);
-}
-
 // Spaceship Physics
 const spaceship = document.getElementById('spaceship');
 let ship = {
@@ -265,15 +227,19 @@ const blackHoleMass = 1000;
 gsap.set(spaceship, { x: ship.x, y: ship.y });
 
 const projectsSection = document.getElementById('projects-section');
-// Ensure hidden on load
 projectsSection.style.display = 'none';
 gsap.set(projectsSection, { top: '100vh' });
-gsap.set('.space-rope', { height: 0, x: 0 });
-gsap.set('.project-tile', { opacity: 0 });
+gsap.set('.project-tile', { opacity: 0, scale: 0 });
 
 const keys = {};
-document.addEventListener('keydown', (e) => { keys[e.key.toLowerCase()] = true; });
-document.addEventListener('keyup', (e) => { keys[e.key.toLowerCase()] = false; });
+document.addEventListener('keydown', (e) => {
+    keys[e.key.toLowerCase()] = true;
+    console.log(`Key down: ${e.key}`);
+});
+document.addEventListener('keyup', (e) => {
+    keys[e.key.toLowerCase()] = false;
+    console.log(`Key up: ${e.key}`);
+});
 
 // Screen Shake
 function screenShake() {
@@ -298,7 +264,7 @@ function fallAndShowProjects() {
     const coderUniverse = document.querySelector('.coder-universe');
     const duration = 2;
 
-    projectsSection.style.display = 'block'; // Make visible before animation
+    projectsSection.style.display = 'block';
     gsap.fromTo(projectsSection, 
         { top: '100vh' }, 
         { 
@@ -307,7 +273,6 @@ function fallAndShowProjects() {
             ease: 'power2.inOut',
             onComplete: () => {
                 animateProjects();
-                updateProjectTiles();
                 isAnimating = false;
             }
         }
@@ -327,46 +292,75 @@ function fallAndShowProjects() {
     });
 }
 
-// Animate Projects
+// Animate Projects with Seamless Spacey Effects
 function animateProjects() {
-    const ropes = document.querySelectorAll('.space-rope');
     const tiles = document.querySelectorAll('.project-tile');
+    const centerX = window.innerWidth / 2;
+    const centerY = window.innerHeight / 2;
 
-    ropes.forEach((rope, index) => {
-        gsap.to(rope, {
-            height: 200,
-            duration: 1.5,
-            ease: 'elastic.out(1, 0.3)',
-            delay: index * 0.3,
-            onUpdate: () => {
-                const progress = gsap.getProperty(rope, 'height') / 200;
-                const wobble = Math.sin(progress * Math.PI * 6) * (1 - progress) * 10;
-                gsap.set(rope, { x: wobble });
-            },
+    tiles.forEach((tile, index) => {
+        // Adjust radius specifically for "Blockchain Dev" (index 4)
+        let radius;
+        if (index === 4) { // "Blockchain Dev" tile
+            radius = 190; // Reduced radius to bring it closer to the center
+        } else {
+            radius = 200 + index * 50; // Original radius for other tiles
+        }
+        const startAngle = (index * 2 * Math.PI) / tiles.length; // Evenly space tiles around the center
+        const orbitDuration = 20 - index * 2; // Different orbit speeds
+
+        // Initial position at starting orbit point
+        const initialX = centerX + Math.cos(startAngle) * radius - 100;
+        const initialY = centerY + Math.sin(startAngle) * radius - 60;
+        gsap.set(tile, {
+            left: initialX,
+            top: initialY,
+            opacity: 0,
+            scale: 0
+        });
+
+        // Fade in with a smooth scale-up effect
+        gsap.to(tile, {
+            opacity: 1,
+            scale: 1,
+            duration: 2,
+            ease: 'power2.out',
+            delay: index * 0.5,
             onComplete: () => {
-                gsap.to(rope, {
-                    x: 0,
+                // Pulsing glow effect
+                gsap.to(tile, {
+                    boxShadow: '0 0 30px rgba(255, 255, 255, 0.5)',
                     duration: 3,
-                    ease: 'sine.inOut',
                     repeat: -1,
                     yoyo: true,
-                    keyframes: {
-                        '0%': { x: 0 },
-                        '25%': { x: 5 },
-                        '75%': { x: -5 },
-                        '100%': { x: 0 }
-                    }
+                    ease: 'sine.inOut'
                 });
             }
         });
-    });
 
-    tiles.forEach((tile, index) => {
+        // Orbiting animation using GSAP
         gsap.to(tile, {
-            opacity: 1,
-            duration: 1,
-            ease: 'power2.out',
-            delay: index * 0.3 + 0.5
+            motionPath: {
+                path: [
+                    { left: initialX, top: initialY },
+                    { left: centerX + Math.cos(startAngle + Math.PI / 2) * radius - 100, top: centerY + Math.sin(startAngle + Math.PI / 2) * radius - 60 },
+                    { left: centerX + Math.cos(startAngle + Math.PI) * radius - 100, top: centerY + Math.sin(startAngle + Math.PI) * radius - 60 },
+                    { left: centerX + Math.cos(startAngle + 3 * Math.PI / 2) * radius - 100, top: centerY + Math.sin(startAngle + 3 * Math.PI / 2) * radius - 60 },
+                    { left: initialX, top: initialY }
+                ],
+                curviness: 1
+            },
+            duration: orbitDuration,
+            repeat: -1,
+            ease: 'linear',
+            onUpdate: function() {
+                // Subtle rotation based on position
+                const progress = this.progress();
+                const angle = startAngle + progress * 2 * Math.PI;
+                gsap.set(tile, {
+                    rotation: Math.sin(angle) * 10 // Subtle tilt
+                });
+            }
         });
     });
 }
@@ -391,9 +385,8 @@ function resetProjects() {
         duration: duration,
         ease: 'power2.inOut',
         onComplete: () => {
-            projectsSection.style.display = 'none'; // Hide after animation
-            gsap.set('.space-rope', { height: 0, x: 0 });
-            gsap.set('.project-tile', { opacity: 0 });
+            projectsSection.style.display = 'none';
+            gsap.set('.project-tile', { opacity: 0, scale: 0 });
             isAnimating = false;
         }
     });
@@ -433,11 +426,7 @@ function moveSpaceship() {
 
         if (ship.x < 20) { ship.x = 20; ship.vx = -ship.vx * 0.5; }
         if (ship.x > window.innerWidth - 20) { ship.x = window.innerWidth - 20; ship.vx = -ship.vx * 0.5; }
-        if (ship.y < 20) { 
-            ship.y = 20; 
-            ship.vy = -ship.vy * 0.5; 
-            if (projectsSection.style.top === '0px') resetProjects();
-        }
+        if (ship.y < 20) { ship.y = 20; ship.vy = -ship.vy * 0.5; if (projectsSection.style.top === '0px') resetProjects(); }
         if (ship.y > window.innerHeight - 20) { ship.y = window.innerHeight - 20; ship.vy = -ship.vy * 0.5; }
     }
 
@@ -486,27 +475,29 @@ function checkCollisions() {
         }
     });
 
-    projectTiles.forEach(item => {
-        const element = document.getElementById(item.id);
-        const rect = element.getBoundingClientRect();
+    const projectTiles = document.querySelectorAll('.project-tile');
+    projectTiles.forEach(tile => {
+        const rect = tile.getBoundingClientRect();
 
-        if (
-            shipRect.left < rect.right &&
-            shipRect.right > rect.left &&
-            shipRect.top < rect.bottom &&
-            shipRect.bottom > rect.top
-        ) {
-            gsap.to(element, { scale: 1.1, duration: 0.2, ease: 'power2.out' });
-            if (keys['enter']) {
-                const action = element.getAttribute('data-action');
-                if (action === 'link') {
-                    const href = element.getAttribute('data-href');
-                    if (href) window.open(href, '_blank');
+        if (projectsSection.style.display === 'block' && projectsSection.style.top === '0px') {
+            if (
+                shipRect.left < rect.right &&
+                shipRect.right > rect.left &&
+                shipRect.top < rect.bottom &&
+                shipRect.bottom > rect.top
+            ) {
+                gsap.to(tile, { scale: 1.1, duration: 0.2, ease: 'power2.out' });
+                if (keys['enter']) {
+                    const action = tile.getAttribute('data-action');
+                    if (action === 'link') {
+                        const href = tile.getAttribute('data-href');
+                        if (href) window.open(href, '_blank');
+                    }
+                    keys['enter'] = false;
                 }
-                keys['enter'] = false;
+            } else {
+                gsap.to(tile, { scale: 1, duration: 0.2, ease: 'power2.out' });
             }
-        } else {
-            gsap.to(element, { scale: 1, duration: 0.2, ease: 'power2.out' });
         }
     });
 }
@@ -527,10 +518,8 @@ window.addEventListener('resize', () => {
     gsap.set(spaceship, { x: ship.x, y: ship.y });
 });
 
-// Ensure Projects section is hidden on page load/reload
 window.addEventListener('load', () => {
     projectsSection.style.display = 'none';
     gsap.set(projectsSection, { top: '100vh' });
-    gsap.set('.space-rope', { height: 0, x: 0 });
-    gsap.set('.project-tile', { opacity: 0 });
+    gsap.set('.project-tile', { opacity: 0, scale: 0 });
 });
