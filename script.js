@@ -166,7 +166,6 @@ const floatingItems = [
     { id: 'letter-7', radius: 310, angle: Math.PI, angleSpeed: 0.006 },
     { id: 'letter-0', radius: 330, angle: 4 * Math.PI / 3, angleSpeed: 0.0055 },
     { id: 'letter-0-2', radius: 290, angle: 5 * Math.PI / 3, angleSpeed: 0.0065 },
-    { id: 'projects-item', radius: 250, angle: Math.PI / 2, angleSpeed: 0.008 },
     { id: 'linkedin-item', radius: 230, angle: Math.PI / 4, angleSpeed: 0.009 },
     { id: 'github-item', radius: 240, angle: 5 * Math.PI / 4, angleSpeed: 0.0085 },
     { id: 'debris-1', radius: 280, angle: 0.2, angleSpeed: 0.006 },
@@ -434,11 +433,6 @@ const blackHoleMass = 1000;
 
 gsap.set(spaceship, { x: ship.x, y: ship.y });
 
-const projectsSection = document.getElementById('projects-section');
-projectsSection.style.display = 'none';
-gsap.set(projectsSection, { top: '100vh' });
-gsap.set('.project-tile', { opacity: 0, scale: 0 });
-
 const keys = {};
 document.addEventListener('keydown', (e) => {
     keys[e.key.toLowerCase()] = true;
@@ -462,139 +456,6 @@ function screenShake() {
 }
 
 let isAnimating = false;
-
-function fallAndShowProjects() {
-    if (isAnimating) return;
-    isAnimating = true;
-
-    const coderUniverse = document.querySelector('.coder-universe');
-    const duration = 2;
-
-    projectsSection.style.display = 'block';
-    gsap.fromTo(projectsSection, 
-        { top: '100vh' }, 
-        { 
-            top: 0, 
-            duration: duration, 
-            ease: 'power2.inOut',
-            onComplete: () => {
-                animateProjects();
-                isAnimating = false;
-            }
-        }
-    );
-
-    gsap.to(ship, {
-        y: window.innerHeight - 20,
-        duration: duration,
-        ease: 'power2.inOut',
-        onUpdate: () => gsap.set(spaceship, { x: ship.x, y: ship.y })
-    });
-
-    gsap.to(coderUniverse, {
-        opacity: 0,
-        duration: duration,
-        ease: 'power2.inOut'
-    });
-}
-
-function animateProjects() {
-    const tiles = document.querySelectorAll('.project-tile');
-    const centerX = window.innerWidth / 2;
-    const centerY = window.innerHeight / 2;
-
-    tiles.forEach((tile, index) => {
-        let radius;
-        if (index === 4) {
-            radius = 190;
-        } else {
-            radius = 200 + index * 50;
-        }
-        const startAngle = (index * 2 * Math.PI) / tiles.length;
-        const orbitDuration = 20 - index * 2;
-
-        const initialX = centerX + Math.cos(startAngle) * radius - 100;
-        const initialY = centerY + Math.sin(startAngle) * radius - 60;
-        gsap.set(tile, {
-            left: initialX,
-            top: initialY,
-            opacity: 0,
-            scale: 0
-        });
-
-        gsap.to(tile, {
-            opacity: 1,
-            scale: 1,
-            duration: 2,
-            ease: 'power2.out',
-            delay: index * 0.5,
-            onComplete: () => {
-                gsap.to(tile, {
-                    boxShadow: '0 0 30px rgba(255, 255, 255, 0.5)',
-                    duration: 3,
-                    repeat: -1,
-                    yoyo: true,
-                    ease: 'sine.inOut'
-                });
-            }
-        });
-
-        gsap.to(tile, {
-            motionPath: {
-                path: [
-                    { left: initialX, top: initialY },
-                    { left: centerX + Math.cos(startAngle + Math.PI / 2) * radius - 100, top: centerY + Math.sin(startAngle + Math.PI / 2) * radius - 60 },
-                    { left: centerX + Math.cos(startAngle + Math.PI) * radius - 100, top: centerY + Math.sin(startAngle + Math.PI) * radius - 60 },
-                    { left: centerX + Math.cos(startAngle + 3 * Math.PI / 2) * radius - 100, top: centerY + Math.sin(startAngle + 3 * Math.PI / 2) * radius - 60 },
-                    { left: initialX, top: initialY }
-                ],
-                curviness: 1
-            },
-            duration: orbitDuration,
-            repeat: -1,
-            ease: 'linear',
-            onUpdate: function() {
-                const progress = this.progress();
-                const angle = startAngle + progress * 2 * Math.PI;
-                gsap.set(tile, {
-                    rotation: Math.sin(angle) * 10
-                });
-            }
-        });
-    });
-}
-
-function resetProjects() {
-    if (isAnimating) return;
-    isAnimating = true;
-
-    const coderUniverse = document.querySelector('.coder-universe');
-    const duration = 2;
-
-    gsap.to(ship, {
-        y: window.innerHeight - 50,
-        duration: duration,
-        ease: 'power2.inOut',
-        onUpdate: () => gsap.set(spaceship, { x: ship.x, y: ship.y })
-    });
-
-    gsap.to(projectsSection, {
-        top: '100vh',
-        duration: duration,
-        ease: 'power2.inOut',
-        onComplete: () => {
-            projectsSection.style.display = 'none';
-            gsap.set('.project-tile', { opacity: 0, scale: 0 });
-            isAnimating = false;
-        }
-    });
-
-    gsap.to(coderUniverse, {
-        opacity: 1,
-        duration: duration,
-        ease: 'power2.inOut'
-    });
-}
 
 function moveSpaceship() {
     const thrust = 1.0;
@@ -624,7 +485,7 @@ function moveSpaceship() {
 
         if (ship.x < 20) { ship.x = 20; ship.vx = -ship.vx * 0.5; }
         if (ship.x > window.innerWidth - 20) { ship.x = window.innerWidth - 20; ship.vx = -ship.vx * 0.5; }
-        if (ship.y < 20) { ship.y = 20; ship.vy = -ship.vy * 0.5; if (projectsSection.style.top === '0px') resetProjects(); }
+        if (ship.y < 20) { ship.y = 20; ship.vy = -ship.vy * 0.5; }
         if (ship.y > window.innerHeight - 20) { ship.y = window.innerHeight - 20; ship.vy = -ship.vy * 0.5; }
     }
 
@@ -666,9 +527,6 @@ function checkCollisions() {
                         const href = element.getAttribute('data-href');
                         if (href) window.open(href, '_blank');
                         console.log(`Opened ${href}`);
-                    } else if (action === 'fall') {
-                        fallAndShowProjects();
-                        console.log('Triggered projects');
                     } else if (item.id === 'letter-j' && now - lastJalalTrigger > COOLDOWN_MS) {
                         animateSpaceVesselString('vessel-string-1');
                         lastJalalTrigger = now;
@@ -685,38 +543,7 @@ function checkCollisions() {
             gsap.to(element, { scale: 1, duration: 0.2, ease: 'power2.out' });
         }
     });
-
-    const projectTiles = document.querySelectorAll('.project-tile');
-    projectTiles.forEach(tile => {
-        const rect = tile.getBoundingClientRect();
-
-        if (projectsSection.style.display === 'block' && projectsSection.style.top === '0px') {
-            if (
-                shipRect.left < rect.right &&
-                shipRect.right > rect.left &&
-                shipRect.top < rect.bottom &&
-                shipRect.bottom > rect.top
-            ) {
-                gsap.to(tile, { scale: 1.1, duration: 0.2, ease: 'power2.out' });
-                if (keys['enter']) {
-                    const action = tile.getAttribute('data-action');
-                    if (action === 'link') {
-                        const href = tile.getAttribute('data-href');
-                        if (href) window.open(href, '_blank');
-                        console.log(`Opened project link ${href}`);
-                    }
-                    keys['enter'] = false;
-                }
-            } else {
-                gsap.to(tile, { scale: 1, duration: 0.2, ease: 'power2.out' });
-            }
-        }
-    });
 }
-
-document.addEventListener('keydown', (e) => {
-    if (e.key === ' ' && !isAnimating) resetProjects();
-});
 
 window.addEventListener('resize', () => {
     canvas.width = window.innerWidth;
@@ -731,8 +558,5 @@ window.addEventListener('resize', () => {
 });
 
 window.addEventListener('load', () => {
-    projectsSection.style.display = 'none';
-    gsap.set(projectsSection, { top: '100vh' });
-    gsap.set('.project-tile', { opacity: 0, scale: 0 });
     gsap.set('.space-vessel-string', { opacity: 0 });
 });
