@@ -47,7 +47,7 @@
 ###
 
 <div align="center">
-  [![GitHub Streak](https://streak-stats.demolab.com/?user=ju4700)](https://git.io/streak-stats)
+  <a href="https://git.io/streak-stats"><img src="https://streak-stats.demolab.com?user=ju4700&theme=dark" alt="GitHub Streak" /></a>
 </div>
 
 ###
