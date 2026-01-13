@@ -6,7 +6,7 @@
 
 ###
 
-<p align="center">I'm a passionate computer science enthusiast with a keen interest in Cybersecurity and Machine Learning. Here, you'll find a mix of projects ranging from coding assignments, development projects to cybersecurity challenges. Feel free to explore, contribute, or provide feedback on any of the projects you come across. I'm currently pursuing my degree in computer science, delving into various aspects of software development, algorithms, and cybersecurity. My fascination with cybersecurity stems from its dynamic nature and the constant challenge it presents. I'm always eager to learn and adapt to the ever-evolving landscape of cybersecurity threats and defenses.</p>
+<p align="center">I'm a passionate computer science enthusiast with a keen interest in Software Development and Networking. Here, you'll find a mix of projects ranging from coding assignments, development projects to network analyst challenges. Feel free to explore, contribute, or provide feedback on any of the projects you come across. I'm currently pursuing my degree in computer science, delving into various aspects of software development, algorithms, and networks. My fascination with Software Development and Networking stems from its dynamic nature and the constant challenge it presents. I'm always eager to learn and adapt to the ever-evolving landscape of cybersecurity threats and defenses.</p>
 
 ###
 
