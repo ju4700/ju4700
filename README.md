@@ -17,17 +17,17 @@
 <div align="center">
   <img src="https://skillicons.dev/icons?i=py" height="40" alt="Python"  />
   <img width="12" />
-  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/cplusplus/cplusplus-original.svg" height="40" alt="cplusplus logo"  />
+  <img src="https://skillicons.dev/icons?i=sql" height="40" alt="sql logo"  />
   <img width="12" />
-  <img src="https://skillicons.dev/icons?i=ts" height="40" alt="django logo"  />
+  <img src="https://skillicons.dev/icons?i=ts" height="40" alt="ts logo"  />
+  <img width="12" />
+  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/cplusplus/cplusplus-original.svg" height="40" alt="cplusplus logo"  />
   <img width="12" />
   <img src="https://skillicons.dev/icons?i=next" height="40" alt="react logo"  />
   <img width="12" />
   <img src="https://skillicons.dev/icons?i=css" height="40" alt="css logo"  />
   <img width="12" />
   <img src="https://skillicons.dev/icons?i=docker" height="40" alt="docker logo"  />
-  <img width="12" />
-  <img src="https://skillicons.dev/icons?i=mysql" height="40" alt="sql logo"  />
   <img width="12" />
   <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/fedora/fedora-original.svg" height="40" alt="fedora logo"  />
 </div>
