@@ -17,7 +17,9 @@
 <div align="center">
   <img src="https://skillicons.dev/icons?i=py" height="40" alt="Python"  />
   <img width="12" />
-  <img src="https://skillicons.dev/icons?i=sql" height="40" alt="sql logo"  />
+  
+            <i class="devicon-azuresqldatabase-plain colored"></i>
+          
   <img width="12" />
   <img src="https://skillicons.dev/icons?i=ts" height="40" alt="ts logo"  />
   <img width="12" />
